@@ -11,13 +11,41 @@ import logging
 
 logger = logging.getLogger()
 
-generateCommand = "two-factor-authenticator generate %s --clip"
-listCommand = "two-factor-authenticator list"
+twoFactorAuthenticatorCommand = "two-factor-authenticator"
+generateCommand = twoFactorAuthenticatorCommand + " generate %s --clip"
+listCommand = twoFactorAuthenticatorCommand + " list"
+
+def which(program):
+    import os
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
+
+def checkForCommand(command):
+    commandFound = which(command)
+    if commandFound:
+        logger.debug("command found: %s" % commandFound)
+        return True
+    logger.error("%s command not found" % command)
+    return False
 
 class TwoFactorAuthenticatorExtension(Extension):
 
     def __init__(self):
         super(TwoFactorAuthenticatorExtension, self).__init__()
+        if not checkForCommand(twoFactorAuthenticatorCommand):
+            raise BaseException("two-factor-authenticator command not found or not executable, extension halted")
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
         logger.info("Initialized extension")
