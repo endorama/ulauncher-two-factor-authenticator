@@ -85,7 +85,7 @@ class KeywordQueryEventListener(EventListener):
 
         for i in available_profiles:
             logger.info(i)
-            items.append(ExtensionResultItem(icon='images/icon.png',
+            items.append(ExtensionResultItem(icon='images/otp.svg.png',
                                              name='%s' % i['name'],
                                              description='Generate token for %s' % i['name'],
                                              on_enter=ExtensionCustomAction(i['name'], keep_app_open=True)))

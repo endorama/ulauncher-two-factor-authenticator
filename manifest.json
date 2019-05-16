@@ -4,7 +4,7 @@
   "name": "Two Factor Authenticator extension",
   "description": "Secure generation of 2FA tokens",
   "developer_name": "Edoardo Tenani",
-  "icon": "images/icon.png",
+  "icon": "images/icon.svg.png",
   "options": {
     "query_debounce": 0.1
   },
