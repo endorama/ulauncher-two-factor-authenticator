@@ -80,7 +80,7 @@ class KeywordQueryEventListener(EventListener):
                                             reverse=True)
             logger.debug(available_profiles)
 
-            available_profiles = [x for x in available_profiles if x['score'] >= 50.0]
+            available_profiles = [x for x in available_profiles if x['score'] >= 60.0]
             logger.debug(available_profiles)
 
         for i in available_profiles:
