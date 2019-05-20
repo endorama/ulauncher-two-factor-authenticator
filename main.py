@@ -67,7 +67,7 @@ class ItemEnterEventListener(EventListener):
 
 
 class KeywordQueryEventListener(EventListener):
-    def __init__(self):
+    def on_event(self, event, extension):
         proc = subprocess.Popen(listCommand, shell=True,
                                 stdout=subprocess.PIPE)
         profile_list = proc.stdout.read()
