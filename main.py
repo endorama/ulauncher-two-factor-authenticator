@@ -94,6 +94,10 @@ class KeywordQueryEventListener(EventListener):
                 x for x in available_profiles if x['score'] >= 60.0]
             logger.debug(available_profiles)
 
+        if len(available_profiles) == 0:
+            items.append(ExtensionResultItem(
+                icon=None, name='No available items'))
+
         for i in available_profiles:
             logger.info(i)
             items.append(ExtensionResultItem(icon='images/icon.png',
