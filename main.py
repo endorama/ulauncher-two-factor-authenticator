@@ -67,19 +67,19 @@ class ItemEnterEventListener(EventListener):
 
 
 class KeywordQueryEventListener(EventListener):
+
     def on_event(self, event, extension):
         proc = subprocess.Popen(listCommand, shell=True,
                                 stdout=subprocess.PIPE)
         profile_list = proc.stdout.read()
-        self.available_profiles = [
+        available_profiles = [
             x for x in profile_list.split("\n") if x != ""]
         logger.debug("Loaded 2fa profile list")
 
-    def on_event(self, event, extension):
         items = []
         data = event.get_argument()
         available_profiles = [{'name': x, 'score': 0}
-                              for x in self.available_profiles]
+                              for x in available_profiles]
 
         for d in available_profiles:
             d['score'] = get_score(data, d['name'])
