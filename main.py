@@ -51,7 +51,7 @@ class TwoFactorAuthenticatorExtension(Extension):
     def __init__(self):
         super(TwoFactorAuthenticatorExtension, self).__init__()
         if not checkForCommand(twoFactorAuthenticatorCommand):
-            raise BaseException(
+            logger.warn(
                 "two-factor-authenticator command not found or not executable, extension halted")
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
@@ -69,6 +69,12 @@ class ItemEnterEventListener(EventListener):
 class KeywordQueryEventListener(EventListener):
 
     def on_event(self, event, extension):
+        if not checkForCommand(twoFactorAuthenticatorCommand):
+            logger.warn(
+                "two-factor-authenticator command not found or not executable, extension halted")
+            return RenderResultListAction([ExtensionResultItem(
+                icon=None, name='two-factor-autenticator command not found')])
+
         proc = subprocess.Popen(listCommand, shell=True,
                                 stdout=subprocess.PIPE)
         profile_list = proc.stdout.read()
