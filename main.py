@@ -1,60 +1,31 @@
-from operator import itemgetter
-from ulauncher.api.client.EventListener import EventListener
-from ulauncher.api.client.Extension import Extension
-from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
-from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
-from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
-from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
-from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
-from ulauncher.utils.fuzzy_search import get_score
+import gi
+gi.require_version('Gtk', '3.0')
 
-import subprocess
+import cli_dep
+import two_factor_authenticator
+
+from ulauncher.utils.fuzzy_search import get_score
+from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
+from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
+from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
+from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
+from ulauncher.api.client.Extension import Extension
+from ulauncher.api.client.EventListener import EventListener
+from operator import itemgetter
+
 import logging
 
 logger = logging.getLogger()
-
-twoFactorAuthenticatorCommand = "two-factor-authenticator"
-generateCommand = twoFactorAuthenticatorCommand + " generate %s --clip"
-listCommand = twoFactorAuthenticatorCommand + " list"
-
-
-def which(program):
-    import os
-
-    def is_exe(fpath):
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-    fpath, _ = os.path.split(program)
-    if fpath:
-        if is_exe(program):
-            return program
-    else:
-        for path in os.environ["PATH"].split(os.pathsep):
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return exe_file
-
-    return None
-
-
-def checkForCommand(command):
-    commandFound = which(command)
-    if commandFound:
-        logger.debug("command found: %s" % commandFound)
-        return True
-    logger.error("%s command not found" % command)
-    return False
 
 
 class TwoFactorAuthenticatorExtension(Extension):
 
     def __init__(self):
         super(TwoFactorAuthenticatorExtension, self).__init__()
-        if not checkForCommand(twoFactorAuthenticatorCommand):
-            logger.warn(
-                "two-factor-authenticator command not found or not executable, extension halted")
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
+        cli_dep.ensure()
         logger.info("Initialized extension")
 
 
@@ -62,22 +33,14 @@ class ItemEnterEventListener(EventListener):
     def on_event(self, event, extension):
         data = event.get_data()
         logger.info("Generating token for %s" % data)
-        subprocess.Popen(generateCommand % data, shell=True)
+        two_factor_authenticator.generate(data)
         return HideWindowAction()
 
 
 class KeywordQueryEventListener(EventListener):
 
     def on_event(self, event, extension):
-        if not checkForCommand(twoFactorAuthenticatorCommand):
-            logger.warn(
-                "two-factor-authenticator command not found or not executable, extension halted")
-            return RenderResultListAction([ExtensionResultItem(
-                icon=None, name='two-factor-autenticator command not found')])
-
-        proc = subprocess.Popen(listCommand, shell=True,
-                                stdout=subprocess.PIPE)
-        profile_list = proc.stdout.read().decode("utf-8")
+        profile_list = two_factor_authenticator.list()
         available_profiles = [
             x for x in profile_list.split("\n") if x != ""]
         logger.debug("Loaded 2fa profile list")
