@@ -15,6 +15,13 @@
       "name": "2fa",
       "description": "Generate 2FA token",
       "default_value": "2fa"
+    },
+    {
+      "id": "2fa_fuzzy_threshold",
+      "type": "input",
+      "name": "fuzzy threshold",
+      "description": "Threshold used in filtering fuzzy matching value. Greater the value, more precise should be the match to be displayed. Very high value can hide almost all entries.",
+      "default_value": 40
     }
   ]
 }

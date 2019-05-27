@@ -96,8 +96,10 @@ class KeywordQueryEventListener(EventListener):
                                         reverse=True)
             logger.debug(available_profiles)
 
+            fuzzy_threshold = float(extension.preferences['2fa_fuzzy_threshold'])
+            logger.debug(fuzzy_threshold)
             available_profiles = [
-                x for x in available_profiles if x['score'] >= 60.0]
+                x for x in available_profiles if x['score'] > fuzzy_threshold]
             logger.debug(available_profiles)
 
         if len(available_profiles) == 0:
