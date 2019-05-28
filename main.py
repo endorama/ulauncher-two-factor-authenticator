@@ -1,3 +1,8 @@
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Notify', '0.7')
+from gi.repository import Gtk, Gdk, Notify
+
 from operator import itemgetter
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
@@ -11,6 +16,7 @@ from ulauncher.util.fuzzy_search import get_score
 import subprocess
 import logging
 
+Notify.init("ulauncher-two-factor-authenticator")
 logger = logging.getLogger()
 
 twoFactorAuthenticatorCommand = "two-factor-authenticator"
@@ -46,12 +52,31 @@ def checkForCommand(command):
     return False
 
 
+def showNotif():
+    icon = Gtk.IconTheme.get_default().lookup_icon("dialog-error", 48, 0)
+
+    message = Notify.Notification.new(
+        "Ulauncher-clipboard error",
+        "Could not load {}. Make sure it's installed and enabled".format(
+            "hello"),
+        icon.get_filename()
+    )
+
+    message.set_timeout(Notify.EXPIRES_DEFAULT)
+    # message.set_timeout(Notify.EXPIRES_NEVER)
+    message.set_urgency(2)
+    message.show()
+
+
 class TwoFactorAuthenticatorExtension(Extension):
 
     def __init__(self):
         super(TwoFactorAuthenticatorExtension, self).__init__()
         if not checkForCommand(twoFactorAuthenticatorCommand):
-            logger.warn(
+            logger.error(
+                "two-factor-authenticator command not found or not executable, extension halted")
+            showNotif()
+            raise Exception(
                 "two-factor-authenticator command not found or not executable, extension halted")
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
