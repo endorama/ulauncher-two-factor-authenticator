@@ -73,7 +73,7 @@ class KeywordQueryEventListener(EventListener):
             logger.warn(
                 "two-factor-authenticator command not found or not executable, extension halted")
             return RenderResultListAction([ExtensionResultItem(
-                icon=None, name='two-factor-autenticator command not found')])
+                icon='images/missing.png', name='two-factor-autenticator command not found')])
 
         proc = subprocess.Popen(listCommand, shell=True,
                                 stdout=subprocess.PIPE)
@@ -96,7 +96,8 @@ class KeywordQueryEventListener(EventListener):
                                         reverse=True)
             logger.debug(available_profiles)
 
-            fuzzy_threshold = float(extension.preferences['2fa_fuzzy_threshold'])
+            fuzzy_threshold = float(
+                extension.preferences['2fa_fuzzy_threshold'])
             logger.debug(fuzzy_threshold)
             available_profiles = [
                 x for x in available_profiles if x['score'] > fuzzy_threshold]
@@ -104,7 +105,7 @@ class KeywordQueryEventListener(EventListener):
 
         if len(available_profiles) == 0:
             items.append(ExtensionResultItem(
-                icon=None, name='No available items'))
+                icon='images/missing.png', name='No item matches string'))
 
         for i in available_profiles:
             logger.info(i)
