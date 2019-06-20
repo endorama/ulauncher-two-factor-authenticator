@@ -77,7 +77,7 @@ class KeywordQueryEventListener(EventListener):
 
         proc = subprocess.Popen(listCommand, shell=True,
                                 stdout=subprocess.PIPE)
-        profile_list = proc.stdout.read()
+        profile_list = proc.stdout.read().decode("utf-8")
         available_profiles = [
             x for x in profile_list.split("\n") if x != ""]
         logger.debug("Loaded 2fa profile list")
