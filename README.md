@@ -1,7 +1,6 @@
 # ulauncher-two-factor-authenticator
 
-This Ulauncher extension briges two-factor-authenticator cli application and Ulauncher, bringing the
-safety of the cli tool to Ulauncher to generate OTP code.
+This Ulauncher extension bridges [`two-factor-authenticator`](https://github.com/endorama/two-factor-authenticator) CLI application and Ulauncher, making **easy** and **safe** to generate OTP codes.
 
 ## Install
 
