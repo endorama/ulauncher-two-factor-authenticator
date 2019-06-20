@@ -1,0 +1,4 @@
+[
+  {"required_api_version": "^1.0.0", "commit": "d7f1ba5"},
+  {"required_api_version": "^2.0.0", "commit": "master"}
+]

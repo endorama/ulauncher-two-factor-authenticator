@@ -6,7 +6,7 @@ from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
-from ulauncher.util.fuzzy_search import get_score
+from ulauncher.utils.fuzzy_search import get_score
 
 import subprocess
 import logging
@@ -77,7 +77,7 @@ class KeywordQueryEventListener(EventListener):
 
         proc = subprocess.Popen(listCommand, shell=True,
                                 stdout=subprocess.PIPE)
-        profile_list = proc.stdout.read()
+        profile_list = proc.stdout.read().decode("utf-8")
         available_profiles = [
             x for x in profile_list.split("\n") if x != ""]
         logger.debug("Loaded 2fa profile list")
@@ -96,7 +96,8 @@ class KeywordQueryEventListener(EventListener):
                                         reverse=True)
             logger.debug(available_profiles)
 
-            fuzzy_threshold = float(extension.preferences['2fa_fuzzy_threshold'])
+            fuzzy_threshold = float(
+                extension.preferences['2fa_fuzzy_threshold'])
             logger.debug(fuzzy_threshold)
             available_profiles = [
                 x for x in available_profiles if x['score'] > fuzzy_threshold]
