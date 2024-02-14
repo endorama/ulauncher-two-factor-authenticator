@@ -13,7 +13,7 @@ import logging
 
 logger = logging.getLogger()
 
-twoFactorAuthenticatorCommand = "two-factor-authenticator"
+twoFactorAuthenticatorCommand = "2ami"
 generateCommand = twoFactorAuthenticatorCommand + " generate %s --clip"
 listCommand = twoFactorAuthenticatorCommand + " list"
 
